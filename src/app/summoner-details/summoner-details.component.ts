@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { NavigationStart } from '@angular/router';
 
 import { SummonerDTO } from '../summoner-data';
-import { testObj } from '../summoner-data';
 
 @Component({
   selector: 'app-summoner-details',
@@ -13,11 +12,10 @@ import { testObj } from '../summoner-data';
 })
 export class SummonerDetailsComponent implements OnInit {
 
-  summonerData: any = testObj;
+  summonerData: any;
   
   updateSummonerData(): void {
     const summonerName = this.route.snapshot.paramMap.get('name');
-	console.log(summonerName);
   }
   
   constructor(private route: ActivatedRoute, private router: Router) { }
