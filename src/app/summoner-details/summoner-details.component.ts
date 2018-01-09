@@ -20,6 +20,8 @@ export class SummonerDetailsComponent implements OnInit {
 	
 	this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
 	  this.summonerData = summonerData;
+	  // JJV DEBUG
+	  console.log(this.summonerData.accountId);
 	});
   }
   
