@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { NavigationStart } from '@angular/router';
+import { NavigationEnd } from '@angular/router';
 
-import { SummonerDTO } from '../summoner-data';
+import { SummonerService } from '../summoner.service';
 
 @Component({
   selector: 'app-summoner-details',
@@ -12,19 +12,25 @@ import { SummonerDTO } from '../summoner-data';
 })
 export class SummonerDetailsComponent implements OnInit {
 
+  // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
   summonerData: any;
   
   updateSummonerData(): void {
-    const summonerName = this.route.snapshot.paramMap.get('name');
+    var summonerName = this.route.snapshot.paramMap.get('name');
+	
+	this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
+	  this.summonerData = summonerData;
+	});
   }
   
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService) { }
 
   ngOnInit() {
     this.updateSummonerData();
 	
+	// Check if the route has updated
 	this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
+      if (event instanceof NavigationEnd) {
         this.updateSummonerData();
 	  }
 	});
