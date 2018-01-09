@@ -9,7 +9,7 @@ export class SearchbarComponent implements OnInit {
 
   summonerName: string = "";
 
-  summonerNameInvalid () : number {
+  summonerNameInvalid () : boolean {
 	  return (this.summonerName.length == 0);
   }
   

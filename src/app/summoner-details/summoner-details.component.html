@@ -1,7 +1,13 @@
-<p>SUMMONER DETAILS</p>
-
 <div *ngIf="summonerData">
 
-  <h2>{{ summonerData.name | uppercase }}</h2>
+  <div class="header">Summoner Details</div>
+  
+  <div class="details">
+  
+  <div>Name: {{ summonerData.name }}</div>
+  <div>Profile Icon ID: {{ summonerData.profileIconId }}</div>
+  <div>Summoner Level: {{ summonerData.summonerLevel }}</div>
+  
+  </div>
 
 </div>
