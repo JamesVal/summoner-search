@@ -1,0 +1,5 @@
+<div class="searchbar">
+
+  <input [(ngModel)]="summonerName" type="text" placeholder="Enter Summoner Name"/><a [class.disabled]="summonerNameInvalid()" routerLink="/summonerdetails/{{summonerName}}"><button [class.disabled]="summonerNameInvalid()" class="data-button">Get Data</button></a>
+
+</div>
