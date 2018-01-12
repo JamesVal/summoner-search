@@ -11,14 +11,36 @@ const testRecentMatchData = {"matches":[{"platformId":"NA1","gameId":2689965687,
 @Injectable()
 export class SummonerService {
 
-  private summonerDataURL = 'api/riotAPI/byName/'
-
+  private summonerDataURL = 'api/riotAPI/byName/';
+  private summonerAccountId : number;
+  private summonerData$: Observable<any>;
+  private summonerName: string;
+ 
   getSummonerData(name: string) : Observable<any> {
-    // JJV DEBUG - Spoof test object since server will not always be running
-    return of(testSummonerData);
-	//return this.http.get<any>(this.summonerDataURL+name);
+	
+	if (name != this.summonerName) {
+      this.summonerName = name;
+	  this.summonerData$ = null;
+	}
+	
+    if (this.summonerData$) {
+      return (this.summonerData$);
+	}
+	
+	// JJV DEBUG - Spoof test object since server will not always be running
+	this.summonerData$ = of(testSummonerData);    
+	//this.summonerData$ = this.http.get<any>(this.summonerDataURL+name);
+	
+	return (this.summonerData$);
   }
 
+  getMatchDetails(accountID: number) : Observable<any> {
+    // JJV DEBUG - Spoof test object since server will not always be running
+	return of(testRecentMatchData);
+	
+	// JJV DEBUG - NEED API CALL HERE
+  }
+  
   constructor(private http: HttpClient) { }
 
 }

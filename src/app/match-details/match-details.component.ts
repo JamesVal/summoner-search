@@ -6,37 +6,41 @@ import { NavigationEnd } from '@angular/router';
 import { SummonerService } from '../summoner.service';
 
 @Component({
-  selector: 'app-summoner-details',
-  templateUrl: './summoner-details.component.html',
-  styleUrls: ['./summoner-details.component.css']
+  selector: 'app-match-details',
+  templateUrl: './match-details.component.html',
+  styleUrls: ['./match-details.component.css']
 })
-export class SummonerDetailsComponent implements OnInit {
+export class MatchDetailsComponent implements OnInit {
 
   // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
-  summonerData: any;
-  
-  updateSummonerData(): void {
-    var summonerName = this.route.snapshot.paramMap.get('name');
+  matchData: any;
+
+  updateMatchData(): void {
+    var summonerName = this.route.parent.snapshot.paramMap.get('name');
+	console.log('summoner_name:' + summonerName);
 
 	this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
-	  this.summonerData = summonerData;
-
-	  // JJV DEBUG
-	  console.log(this.summonerData.accountId);
+	  this.summonerService.getMatchDetails(summonerData.accountId).subscribe(matchData => {
+        this.matchData = matchData;
+		
+		// JJV DEBUG
+		console.log('got match data');
+	  })
 	});
+
   }
   
   constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService) { }
 
   ngOnInit() {
-    this.updateSummonerData();
+    this.updateMatchData();
 	
 	// Check if the route has updated
 	this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.updateSummonerData();
+        this.updateMatchData();
 	  }
 	});
   }
-  
+
 }
