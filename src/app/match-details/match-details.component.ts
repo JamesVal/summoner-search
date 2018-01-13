@@ -13,19 +13,25 @@ import { SummonerService } from '../summoner.service';
 export class MatchDetailsComponent implements OnInit {
 
   // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
-  matchData: any;
-
+  recentMatchData: any;
+   
   updateMatchData(): void {
     var summonerName = this.route.parent.snapshot.paramMap.get('name');
 	console.log('summoner_name:' + summonerName);
 
 	this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
-	  this.summonerService.getMatchDetails(summonerData.accountId).subscribe(matchData => {
-        this.matchData = matchData;
+	  this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
+        this.recentMatchData = recentMatchData;
 		
 		// JJV DEBUG
 		console.log('got match data');
-		console.log(this.matchData.matches);
+		
+
+        // JJV DEBUG - may need to do a recursive subscribe of sort right here		
+		for (var eachMatchIdx = 0; eachMatchIdx < this.recentMatchData.matches.length; eachMatchIdx++) {
+          //this.summonerService.getMatchDetails
+		  console.log(this.recentMatchData.matches[eachMatchIdx].gameId);
+		}
 	  })
 	});
 
@@ -35,8 +41,7 @@ export class MatchDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.updateMatchData();
-	
-	// Check if the route has updated
+
 	this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.updateMatchData();
