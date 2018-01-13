@@ -2,4 +2,7 @@
 
   <div class="header">Recent Match History</div>
 
+  <div class="match" *ngFor="let match of matchData.matches">
+    <div>Match ID: {{match.gameId}}</div>
+  </div>
 </div>

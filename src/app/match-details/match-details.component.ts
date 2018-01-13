@@ -25,6 +25,7 @@ export class MatchDetailsComponent implements OnInit {
 		
 		// JJV DEBUG
 		console.log('got match data');
+		console.log(this.matchData.matches);
 	  })
 	});
 
