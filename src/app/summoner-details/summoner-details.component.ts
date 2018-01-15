@@ -18,25 +18,25 @@ export class SummonerDetailsComponent implements OnInit {
   updateSummonerData(): void {
     var summonerName = this.route.snapshot.paramMap.get('name');
 
-	this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
-	  this.summonerData = summonerData;
+    this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
+      this.summonerData = summonerData;
 
-	  // JJV DEBUG
-	  console.log(this.summonerData.accountId);
-	});
+      // JJV DEBUG
+      console.log(this.summonerData.accountId);
+    });
   }
   
   constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService) { }
 
   ngOnInit() {
     this.updateSummonerData();
-	
-	// Check if the route has updated
-	this.router.events.subscribe((event) => {
+    
+    // Check if the route has updated
+    this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.updateSummonerData();
-	  }
-	});
+      }
+    });
   }
   
 }

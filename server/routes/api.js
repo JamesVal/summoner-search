@@ -12,10 +12,34 @@ router.get('/', (req, res) => {
   res.send('api works');
 });
 
-router.get('/riotAPI/byName/:name', (req, res) => {
+router.get('/riotAPI/getSummoner/:name', (req, res) => {
   const name = req.params.name;
   
   axios.get(`${API}/lol/summoner/v3/summoners/by-name/${name}?api_key=${riotKey.mykey}`)
+    .then(posts => {
+      res.status(200).json(posts.data);
+    })
+    .catch(error => {
+      res.status(500).send(error)
+    });
+});
+
+router.get('/riotAPI/getMatch/:matchId', (req, res) => {
+  const matchId = req.params.matchId;
+  
+  axios.get(`${API}/lol/match/v3/matches/${matchId}?api_key=${riotKey.mykey}`)
+    .then(posts => {
+      res.status(200).json(posts.data);
+    })
+    .catch(error => {
+      res.status(500).send(error)
+    });
+});
+
+router.get('/riotAPI/getChampion/:championId', (req, res) => {
+  const championId = req.params.championId;
+  
+  axios.get(`${API}/lol/static-data/v3/champions/${championId}?api_key=${riotKey.mykey}&tags=image`)
     .then(posts => {
       res.status(200).json(posts.data);
     })

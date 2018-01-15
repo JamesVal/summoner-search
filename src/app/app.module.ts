@@ -19,9 +19,9 @@ import { MatchDetailsComponent } from './match-details/match-details.component';
   ],
   imports: [
     BrowserModule,
-	FormsModule,
-	AppRoutingModule,
-	HttpClientModule
+    FormsModule,
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [SummonerService],
   bootstrap: [AppComponent]
