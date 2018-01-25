@@ -16,16 +16,11 @@
         <td>{{match.gameMode}}</td>
         <td><img src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}"><br>{{match.championName}}</td>
         <td></td>
-        <td></td>
-        <td></td>
+        <td><div *ngFor="let teamMember of match.teams[0].teamMembers">{{teamMember}}</div></td>
+        <td><div *ngFor="let teamMember of match.teams[1].teamMembers">{{teamMember}}</div></td>
         <td></td>
       </tr>
     </table>
   </div>
-  
-<!--
-  <div class="match" *ngFor="let match of matchDataList">
-    <div>Match ID: {{match.gameId}}</div>
-  </div>
--->
+
 </div>

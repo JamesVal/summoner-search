@@ -5,11 +5,17 @@ import { NavigationEnd } from '@angular/router';
 
 import { SummonerService } from '../summoner.service';
 
+class teamDetails {
+  teamId: number;
+  teamMembers: string[];
+}
+
 class matchDetails {
   gameMode: string;
   championId: number;
   championName: string;
   championImg: string;
+  teams: teamDetails[];
 };
 
 @Component({
@@ -43,6 +49,47 @@ export class MatchDetailsComponent implements OnInit {
     return -1; // error?
   }
   
+  getParticipantName(participantId: number, matchData: any): string {
+    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participantIdentities.length; eachParticipantIdx++) {
+      if (participantId == matchData.participantIdentities[eachParticipantIdx].participantId) {
+        return matchData.participantIdentities[eachParticipantIdx].player.summonerName;
+      }
+    }
+    
+    return ""; // error?
+  }
+  
+  getTeamMembers(teamId: number, matchData: any): string[] {
+    var teamMembers: string[] = [];
+    
+    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
+      if (teamId == matchData.participants[eachParticipantIdx].teamId) {
+        var partipantname = this.getParticipantName(matchData.participants[eachParticipantIdx].participantId,matchData);
+        teamMembers.push(partipantname);
+      }
+    }
+    
+    if (teamMembers.length == 0) {
+      // error?
+    }
+    
+    return teamMembers;
+  }
+  
+  getTeamNumbers(matchData: any): number[] {
+    var teamNumbers: number[] = [];
+    
+    for (var eachTeamIdx = 0; eachTeamIdx < matchData.teams.length; eachTeamIdx++) {
+      teamNumbers.push(matchData.teams[eachTeamIdx].teamId);
+    }
+    
+    if (teamNumbers.length == 0) {
+      // error?
+    }
+    
+    return teamNumbers;
+  }
+  
   setChampionData(matchList: matchDetails[], championData: any): void {
     for (var eachMatchIdx = 0; eachMatchIdx < matchList.length; eachMatchIdx++) {
       if (championData.id == matchList[eachMatchIdx].championId) {
@@ -61,8 +108,8 @@ export class MatchDetailsComponent implements OnInit {
 
         this.matchDataList = [];
         
-        // JJV DEBUG - only get the first 10 matches
-        for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.matches.length-10); eachMatchIdx++) {
+        // JJV DEBUG - only get the first 5 matches
+        for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.matches.length-15); eachMatchIdx++) {
           this.summonerService.getMatchDetails(this.recentMatchData.matches[eachMatchIdx].gameId).subscribe(matchData => {
             
             var curData = new matchDetails();
@@ -74,6 +121,16 @@ export class MatchDetailsComponent implements OnInit {
             curData.championName = "";
             curData.championImg = "";
            
+            curData.teams = [];
+            var teamNumbers: number[] = [];
+            teamNumbers = this.getTeamNumbers(matchData);            
+            for (var eachTeamIdx = 0; eachTeamIdx < teamNumbers.length; eachTeamIdx++) {
+              var team = new teamDetails();
+              team.teamId = teamNumbers[eachTeamIdx];
+              team.teamMembers = this.getTeamMembers(teamNumbers[eachTeamIdx],matchData);
+              curData.teams.push(team);
+            }
+            
             this.matchDataList.push(curData);
             
             // JJV DEBUG - this isn't exactly the most elegant way to go about with this since it will unnecessarily update if the same champion is in the game
