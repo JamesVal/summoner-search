@@ -18,7 +18,7 @@
         <td></td>
         <td><div *ngFor="let teamMember of match.teams[0].teamMembers">{{teamMember}}</div></td>
         <td><div *ngFor="let teamMember of match.teams[1].teamMembers">{{teamMember}}</div></td>
-        <td></td>
+        <td>{{match.result}}</td>
       </tr>
     </table>
   </div>

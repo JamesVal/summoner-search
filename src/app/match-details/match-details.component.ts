@@ -16,6 +16,7 @@ class matchDetails {
   championName: string;
   championImg: string;
   teams: teamDetails[];
+  result: string;
 };
 
 @Component({
@@ -90,6 +91,16 @@ export class MatchDetailsComponent implements OnInit {
     return teamNumbers;
   }
   
+  getMatchResult(participantId: number, matchData: any): boolean {
+      for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
+        if (participantId == matchData.participants[eachParticipantIdx].participantId) {
+          return matchData.participants[eachParticipantIdx].stats.win;
+        }
+      }
+    
+    return false;
+  }
+  
   setChampionData(matchList: matchDetails[], championData: any): void {
     for (var eachMatchIdx = 0; eachMatchIdx < matchList.length; eachMatchIdx++) {
       if (championData.id == matchList[eachMatchIdx].championId) {
@@ -117,9 +128,15 @@ export class MatchDetailsComponent implements OnInit {
             
             var participantId = this.getSummonerParticipantId(summonerName, matchData);
             var championId = this.getSummonerChampionId(participantId, matchData);
+            var result = this.getMatchResult(participantId, matchData);
             curData.championId = championId;
             curData.championName = "";
             curData.championImg = "";
+            if (result) {
+              curData.result = "Win";
+            } else {
+              curData.result = "Loss";
+            }
            
             curData.teams = [];
             var teamNumbers: number[] = [];
