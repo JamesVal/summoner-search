@@ -10,11 +10,19 @@ class teamDetails {
   teamMembers: string[];
 }
 
+class KDA {
+  kills: number;
+  deaths: number;
+  assists: number;
+}
+
 class matchDetails {
+  date: number;
   gameMode: string;
   championId: number;
   championName: string;
   championImg: string;
+  kda: KDA;
   teams: teamDetails[];
   result: string;
 };
@@ -92,18 +100,32 @@ export class MatchDetailsComponent implements OnInit {
   }
   
   getMatchResult(participantId: number, matchData: any): boolean {
-      for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
-        if (participantId == matchData.participants[eachParticipantIdx].participantId) {
-          return matchData.participants[eachParticipantIdx].stats.win;
-        }
+    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
+      if (participantId == matchData.participants[eachParticipantIdx].participantId) {
+        return matchData.participants[eachParticipantIdx].stats.win;
       }
+    }
     
     return false;
   }
   
+  getParticipantKDA(participantId: number, matchData: any): KDA {
+    var kda = new KDA();
+    
+    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
+      if (participantId == matchData.participants[eachParticipantIdx].participantId) {
+        kda.kills = matchData.participants[eachParticipantIdx].stats.kills;
+        kda.deaths = matchData.participants[eachParticipantIdx].stats.deaths;
+        kda.assists = matchData.participants[eachParticipantIdx].stats.assists;
+      }
+    }
+    
+    return kda;
+  }
+  
   setChampionData(matchList: matchDetails[], championData: any): void {
     for (var eachMatchIdx = 0; eachMatchIdx < matchList.length; eachMatchIdx++) {
-      if (championData.id == matchList[eachMatchIdx].championId) {
+      if (championData.key == matchList[eachMatchIdx].championId) {
         matchList[eachMatchIdx].championName = championData.name;
         matchList[eachMatchIdx].championImg = championData.image.full;
       }
@@ -115,23 +137,26 @@ export class MatchDetailsComponent implements OnInit {
 
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
-        this.recentMatchData = recentMatchData;
-
+        this.recentMatchData = recentMatchData.matches;
         this.matchDataList = [];
         
-        // JJV DEBUG - only get the first 5 matches
-        for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.matches.length-15); eachMatchIdx++) {
-          this.summonerService.getMatchDetails(this.recentMatchData.matches[eachMatchIdx].gameId).subscribe(matchData => {
+        // JJV DEBUG - only get the last match
+        for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length-10); eachMatchIdx++) {
+          this.summonerService.getMatchDetails(this.recentMatchData[eachMatchIdx].gameId).subscribe(matchData => {
             
             var curData = new matchDetails();
+            curData.date = matchData.gameCreation;
             curData.gameMode = matchData.gameMode;
             
             var participantId = this.getSummonerParticipantId(summonerName, matchData);
             var championId = this.getSummonerChampionId(participantId, matchData);
-            var result = this.getMatchResult(participantId, matchData);
             curData.championId = championId;
             curData.championName = "";
             curData.championImg = "";
+            
+            curData.kda = this.getParticipantKDA(participantId, matchData);
+            
+            var result = this.getMatchResult(participantId, matchData);
             if (result) {
               curData.result = "Win";
             } else {
@@ -150,11 +175,23 @@ export class MatchDetailsComponent implements OnInit {
             
             this.matchDataList.push(curData);
             
-            // JJV DEBUG - this isn't exactly the most elegant way to go about with this since it will unnecessarily update if the same champion is in the game
+            var sortedMatches = this.matchDataList.sort((n1,n2) => {
+              if (n2.date > n1.date) {
+                return 1;
+              } else if (n1.date > n2.date) {
+                return -1;
+              }
+          
+              return 0;
+            });
+            
+            this.matchDataList = sortedMatches;
+            
+            // This originally was an API call but instead am now just using a static file that is hosted server-side (which itself was downloaded from Data Dragon - We can't use Riot's API here because Static Data is heavily rate-limited
             this.summonerService.getChampionDetails(championId).subscribe(championData => {
               this.setChampionData(this.matchDataList, championData);
             });
-            
+
           });
         }
       });

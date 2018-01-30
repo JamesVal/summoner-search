@@ -5,17 +5,19 @@
   <div class="match-div">
       <table class="match-table" width="100%">
       <tr>
-        <th width="16%">Match Type</th>
-        <th width="16%">Champion</th>
-        <th width="16%">KDA</th>
-        <th width="16%">Team 1</th>
-        <th width="16%">Team 2</th>
-        <th width="16%">Result</th>
+        <th width="14%">Date</th>
+        <th width="14%">Match Type</th>
+        <th width="14%">Champion</th>
+        <th width="14%">KDA</th>
+        <th width="14%">Team 1</th>
+        <th width="14%">Team 2</th>
+        <th width="14%">Result</th>
       </tr>
       <tr *ngFor="let match of matchDataList">
+        <td>{{match.date | date:'medium'}}</td>
         <td>{{match.gameMode}}</td>
-        <td><img src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}"><br>{{match.championName}}</td>
-        <td></td>
+        <td><img *ngIf="match.championImg" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}"><br>{{match.championName}}</td>
+        <td>{{match.kda.kills}}/{{match.kda.deaths}}/{{match.kda.assists}}</td>
         <td><div *ngFor="let teamMember of match.teams[0].teamMembers">{{teamMember}}</div></td>
         <td><div *ngFor="let teamMember of match.teams[1].teamMembers">{{teamMember}}</div></td>
         <td>{{match.result}}</td>

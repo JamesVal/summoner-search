@@ -7,12 +7,16 @@ import { of } from 'rxjs/observable/of';
 import { testSummonerData } from './test-data';
 import { testRecentMatchData } from './test-data';
 import { testMatchInformation } from './test-data';
+import { testAllChampionInformation } from './test-data';
 import { testChampionInformation } from './test-data';
+
+import { allChampionInformation } from './champion-static-data';
 
 @Injectable()
 export class SummonerService {
 
   private summonerDataURL = 'api/riotAPI/getSummoner/';
+  private recentMatchesURL = 'api/riotAPI/getRecentMatches/'
   private matchDataURL = 'api/riotAPI/getMatch/';
   private championDataURL = 'api/riotAPI/getChampion/';
   private summonerAccountId : number;
@@ -41,7 +45,7 @@ export class SummonerService {
     // JJV DEBUG - Spoof test object since server will not always be running
     return of(testRecentMatchData);
     
-    // JJV DEBUG - NEED API CALL HERE
+    //return this.http.get<any>(this.recentMatchesURL+accountId);
   }
   
   getMatchDetails(matchId: number) : Observable<any> {
@@ -50,14 +54,25 @@ export class SummonerService {
     
     //return this.http.get<any>(this.matchDataURL+matchId);
   }
-  
+    
   getChampionDetails(championId: number): Observable<any> {
+    // We're no longer doing the API call as the Static Data API is heavily rate-limited, instead just use Data Dragon
     // JJV DEBUG - Spoof test object since server will not always be running
-    return of(testChampionInformation);
+    //return of(testChampionInformation);
     
     //return this.http.get<any>(this.championDataURL+championId);
+    
+    var championObj: any;
+    
+    for (var key in allChampionInformation.data) {
+      if (championId == allChampionInformation.data[key].key) {
+        championObj = allChampionInformation.data[key];
+      }
+    }
+    
+    return of(championObj);
   }
-  
+    
   constructor(private http: HttpClient) { }
 
 }
