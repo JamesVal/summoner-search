@@ -37,10 +37,11 @@ export class MatchDetailsComponent implements OnInit {
   // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
   recentMatchData: any;
   matchDataList: matchDetails[];
+  summonerName: string;
   
   getSummonerParticipantId(summonerName: string, matchData: any): number {
     for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participantIdentities.length; eachParticipantIdx++) {
-      if (summonerName == matchData.participantIdentities[eachParticipantIdx].player.summonerName) {
+      if (summonerName.toLowerCase().replace(/\s/g,'') == matchData.participantIdentities[eachParticipantIdx].player.summonerName.toLowerCase().replace(/\s/g,'')) {
         return matchData.participantIdentities[eachParticipantIdx].participantId;
       }
     }
@@ -48,6 +49,10 @@ export class MatchDetailsComponent implements OnInit {
     return -1; // error?
   }
   
+  isSummoner(summonerName: string): boolean {
+    return (summonerName.toLowerCase().replace(/\s/g,'') == this.summonerName.toLowerCase().replace(/\s/g,''));
+  }
+
   getSummonerChampionId(participantId: number, matchData: any): number {
     for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
       if (participantId == matchData.participants[eachParticipantIdx].participantId) {
@@ -106,6 +111,7 @@ export class MatchDetailsComponent implements OnInit {
       }
     }
     
+    // error ?
     return false;
   }
   
@@ -120,6 +126,8 @@ export class MatchDetailsComponent implements OnInit {
       }
     }
     
+    // JJV DEBUG - need an error check of some sort here
+    
     return kda;
   }
   
@@ -132,9 +140,49 @@ export class MatchDetailsComponent implements OnInit {
     }
   }
   
+  // JJV DEBUG - maybe revisit the global summoner name?
+  createMatchDetails(matchData: any): matchDetails {
+    var summonerName = this.route.parent.snapshot.paramMap.get('name');
+    
+    var curData = new matchDetails();
+    curData.date = matchData.gameCreation;
+    curData.gameMode = matchData.gameMode;
+            
+    var participantId = this.getSummonerParticipantId(summonerName, matchData);
+    var championId = this.getSummonerChampionId(participantId, matchData);
+    curData.championId = championId;
+    curData.championName = "";
+    curData.championImg = "";
+    
+    curData.kda = this.getParticipantKDA(participantId, matchData);
+    
+    var result = this.getMatchResult(participantId, matchData);
+    if (result) {
+      curData.result = "Win";
+    } else {
+      curData.result = "Loss";
+    }
+           
+    curData.teams = [];
+    var teamNumbers: number[] = [];
+    teamNumbers = this.getTeamNumbers(matchData);            
+    for (var eachTeamIdx = 0; eachTeamIdx < teamNumbers.length; eachTeamIdx++) {
+      var team = new teamDetails();
+      team.teamId = teamNumbers[eachTeamIdx];
+      team.teamMembers = this.getTeamMembers(teamNumbers[eachTeamIdx],matchData);
+      curData.teams.push(team);
+    }
+    
+    // JJV DEBUG - need an error check of some sort here
+    
+    return curData;
+  }
+  
   updateMatchData(): void {
-    var summonerName = this.route.parent.snapshot.paramMap.get('name');   
+    var summonerName = this.route.parent.snapshot.paramMap.get('name');
 
+    this.summonerName = summonerName;
+    
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
         this.recentMatchData = recentMatchData.matches;
@@ -144,36 +192,9 @@ export class MatchDetailsComponent implements OnInit {
         for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length-10); eachMatchIdx++) {
           this.summonerService.getMatchDetails(this.recentMatchData[eachMatchIdx].gameId).subscribe(matchData => {
             
-            var curData = new matchDetails();
-            curData.date = matchData.gameCreation;
-            curData.gameMode = matchData.gameMode;
-            
-            var participantId = this.getSummonerParticipantId(summonerName, matchData);
-            var championId = this.getSummonerChampionId(participantId, matchData);
-            curData.championId = championId;
-            curData.championName = "";
-            curData.championImg = "";
-            
-            curData.kda = this.getParticipantKDA(participantId, matchData);
-            
-            var result = this.getMatchResult(participantId, matchData);
-            if (result) {
-              curData.result = "Win";
-            } else {
-              curData.result = "Loss";
-            }
-           
-            curData.teams = [];
-            var teamNumbers: number[] = [];
-            teamNumbers = this.getTeamNumbers(matchData);            
-            for (var eachTeamIdx = 0; eachTeamIdx < teamNumbers.length; eachTeamIdx++) {
-              var team = new teamDetails();
-              team.teamId = teamNumbers[eachTeamIdx];
-              team.teamMembers = this.getTeamMembers(teamNumbers[eachTeamIdx],matchData);
-              curData.teams.push(team);
-            }
-            
-            this.matchDataList.push(curData);
+            var newMatchDetails = this.createMatchDetails(matchData);
+
+            this.matchDataList.push(newMatchDetails);
             
             var sortedMatches = this.matchDataList.sort((n1,n2) => {
               if (n2.date > n1.date) {
@@ -188,7 +209,7 @@ export class MatchDetailsComponent implements OnInit {
             this.matchDataList = sortedMatches;
             
             // This originally was an API call but instead am now just using a static file that is hosted server-side (which itself was downloaded from Data Dragon - We can't use Riot's API here because Static Data is heavily rate-limited
-            this.summonerService.getChampionDetails(championId).subscribe(championData => {
+            this.summonerService.getChampionDetails(newMatchDetails.championId).subscribe(championData => {
               this.setChampionData(this.matchDataList, championData);
             });
 

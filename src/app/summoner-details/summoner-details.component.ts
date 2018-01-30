@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
@@ -20,9 +20,6 @@ export class SummonerDetailsComponent implements OnInit {
 
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerData = summonerData;
-
-      // JJV DEBUG
-      console.log(this.summonerData.accountId);
     });
   }
   
