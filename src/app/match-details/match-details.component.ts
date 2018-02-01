@@ -178,18 +178,20 @@ export class MatchDetailsComponent implements OnInit {
     return curData;
   }
   
-  updateMatchData(): void {
+  updateMatchData(beginIndex: number, endIndex: number): void {
     var summonerName = this.route.parent.snapshot.paramMap.get('name');
 
     this.summonerName = summonerName;
     
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
-      this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
+      this.summonerService.getRecentMatchDetailsByIndex(summonerData.accountId, beginIndex, endIndex).subscribe(recentMatchData => {
+      //this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
         this.recentMatchData = recentMatchData.matches;
         this.matchDataList = [];
         
-        // JJV DEBUG - only get the 10 matches due to rate limiting on the API
-        for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length-10); eachMatchIdx++) {
+        // JJV DEBUG - only get the last 10 recent matches due to rate limiting on the API
+        for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length); eachMatchIdx++) {
+        //for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length-10); eachMatchIdx++) {
           this.summonerService.getMatchDetails(this.recentMatchData[eachMatchIdx].gameId).subscribe(matchData => {
             
             var newMatchDetails = this.createMatchDetails(matchData);
@@ -222,11 +224,11 @@ export class MatchDetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService) { }
 
   ngOnInit() {
-    this.updateMatchData();
+    this.updateMatchData(0,10);
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.updateMatchData();
+        this.updateMatchData(0,10);
       }
     });
   }

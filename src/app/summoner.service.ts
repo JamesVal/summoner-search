@@ -18,6 +18,7 @@ export class SummonerService {
 
   private summonerDataURL = 'api/riotAPI/getSummoner/';
   private recentMatchesURL = 'api/riotAPI/getRecentMatches/'
+  private recentMatchesByIndexURL = 'api/riotAPI/getRecentMatchesByIndex/'
   private matchDataURL = 'api/riotAPI/getMatch/';
   private championDataURL = 'api/riotAPI/getChampion/';
   private summonerAccountId : number;
@@ -48,6 +49,13 @@ export class SummonerService {
     
     //return this.http.get<any>(this.recentMatchesURL+accountId);
   }
+  
+  getRecentMatchDetailsByIndex(accountId: number, beginIndex: number, endIndex: number): Observable<any> {
+    // JJV DEBUG - Spoof test object since server will not always be running
+    return of(testRecentMatchData);
+    
+    //return this.http.get<any>(this.recentMatchesByIndexURL+accountId+"?beginIndex="+beginIndex+"&endIndex="+endIndex);
+  } 
   
   getMatchDetails(matchId: number): Observable<any> {
     // JJV DEBUG - Spoof test object since server will not always be running

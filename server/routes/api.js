@@ -37,6 +37,20 @@ router.get('/riotAPI/getRecentMatches/:accountId', (req, res) => {
     });
 });
 
+router.get('/riotAPI/getRecentMatchesByIndex/:accountId', (req, res) => {
+  const accountId = req.params.accountId;
+  const beginIndex = req.query.beginIndex;
+  const endIndex = req.query.endIndex;
+  
+  axios.get(`${API}/lol/match/v3/matchlists/by-account/${accountId}?api_key=${riotKey.mykey}&beginIndex=${beginIndex}&endIndex=${endIndex}`)
+    .then(posts => {
+      res.status(200).json(posts.data);
+    })
+    .catch(error => {
+      res.status(500).send(error)
+    });
+});
+
 router.get('/riotAPI/getMatch/:matchId', (req, res) => {
   const matchId = req.params.matchId;
   
