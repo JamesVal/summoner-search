@@ -183,13 +183,17 @@ export class MatchDetailsComponent implements OnInit {
 
     this.summonerName = summonerName;
     
+    // JJV DEBUG - maybe want to revisit when to clear the list (i.e. if I decided to add a search by date input or something - we need to clear the data list based off of that event)
+    if (beginIndex == 0) this.matchDataList = [];
+    
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerService.getRecentMatchDetailsByIndex(summonerData.accountId, beginIndex, endIndex).subscribe(recentMatchData => {
       //this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
         this.recentMatchData = recentMatchData.matches;
-        this.matchDataList = [];
+        
         
         // JJV DEBUG - only get the last 10 recent matches due to rate limiting on the API
+        // JJV DEBUG - we might want to adjust this loop to show the correct amount of data as the test data I use doesn't account for the variable indices
         for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length); eachMatchIdx++) {
         //for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length-10); eachMatchIdx++) {
           this.summonerService.getMatchDetails(this.recentMatchData[eachMatchIdx].gameId).subscribe(matchData => {
