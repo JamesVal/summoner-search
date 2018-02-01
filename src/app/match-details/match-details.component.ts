@@ -188,7 +188,7 @@ export class MatchDetailsComponent implements OnInit {
         this.recentMatchData = recentMatchData.matches;
         this.matchDataList = [];
         
-        // JJV DEBUG - only get the last match
+        // JJV DEBUG - only get the 10 matches due to rate limiting on the API
         for (var eachMatchIdx = 0; eachMatchIdx < (this.recentMatchData.length-10); eachMatchIdx++) {
           this.summonerService.getMatchDetails(this.recentMatchData[eachMatchIdx].gameId).subscribe(matchData => {
             
@@ -217,7 +217,6 @@ export class MatchDetailsComponent implements OnInit {
         }
       });
     });
-
   }
   
   constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService) { }

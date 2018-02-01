@@ -4,9 +4,9 @@
   
   <div class="details">
   
-  <div>Name: {{ summonerData.name }}</div>
-  <div>Profile Icon ID: {{ summonerData.profileIconId }}</div>
-  <div>Summoner Level: {{ summonerData.summonerLevel }}</div>
+    <div>Name: {{ summonerData.name }}</div>
+    <div *ngIf="iconFull"><img src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/profileicon/{{iconFull}}" width="150px"></div>
+    <div>Summoner Level: {{ summonerData.summonerLevel }}</div>
   
   </div>
   

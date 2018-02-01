@@ -14,12 +14,21 @@ export class SummonerDetailsComponent implements OnInit {
 
   // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
   summonerData: any;
+  iconFull: string = "";
+  
+  setIconFull(full: string): void {
+    this.iconFull = full;
+  }
   
   updateSummonerData(): void {
     var summonerName = this.route.snapshot.paramMap.get('name');
 
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerData = summonerData;
+      
+      this.summonerService.getProfileIconDetails(this.summonerData.profileIconId).subscribe(iconData => {
+        this.setIconFull(iconData.image.full);
+      });
     });
   }
   
