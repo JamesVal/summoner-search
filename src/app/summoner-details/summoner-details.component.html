@@ -4,12 +4,10 @@
   
   <div class="details">
   
-    <div>Name: {{ summonerData.name }}</div>
-    <div *ngIf="iconFull"><img src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/profileicon/{{iconFull}}" width="150px"></div>
-    <div>Summoner Level: {{ summonerData.summonerLevel }}</div>
-  
+    <img *ngIf="iconFull" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/profileicon/{{iconFull}}" width="100">
+    Name: {{ summonerData.name }}<br>
+    Summoner Level: {{ summonerData.summonerLevel }}
+    
   </div>
-  
-  <router-outlet></router-outlet>
   
 </div>

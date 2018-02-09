@@ -1,0 +1,10 @@
+nav {
+  padding: 10px;
+}
+
+a {
+  padding-left: 10px;
+  padding-right: 10px;
+  text-decoration: none;
+  font-family: arial;
+}

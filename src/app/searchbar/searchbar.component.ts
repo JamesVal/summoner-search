@@ -14,7 +14,7 @@ export class SearchbarComponent implements OnInit {
 
   PressedEnter(evt) : void {
     evt.target.blur();
-    window.location.href = "./summonerdetails/"+this.summonerName;
+    window.location.href = "./summonerbase/"+this.summonerName;
   }
   
   updateSummonerData(): void {

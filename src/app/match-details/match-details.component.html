@@ -3,6 +3,7 @@
   <div class="header">Match History</div>
 
   <div class="match-div">
+  
       <table class="match-table" width="100%">
       <tr>
         <th width="14%">Date</th>
@@ -14,15 +15,18 @@
         <th width="14%">Result</th>
       </tr>
       <tr *ngFor="let match of matchDataList">
-        <td>{{match.date | date:'medium'}}</td>
+        <td>{{match.date | date:'short'}}</td>
         <td>{{match.gameMode}}</td>
-        <td><img *ngIf="match.championImg" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}"><br>{{match.championName}}</td>
+        <td><img *ngIf="match.championImg" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}" width="75"><br>{{match.championName}}</td>
         <td>{{match.kda.kills}}/{{match.kda.deaths}}/{{match.kda.assists}}</td>
         <td><div *ngFor="let teamMember of match.teams[0].teamMembers"><span [class.current-summoner]="isSummoner(teamMember)">{{teamMember}}</span></div></td>
         <td><div *ngFor="let teamMember of match.teams[1].teamMembers"><span [class.current-summoner]="isSummoner(teamMember)">{{teamMember}}</span></div></td>
-        <td><span [ngClass]="(match.result=='Win') ? 'win' : 'lose'">{{match.result}}</span></td>
+        <td><span [ngClass]="(match.result == 'Win') ? 'win' : 'lose'">{{match.result}}</span></td>
       </tr>
     </table>
+    
   </div>
 
+  <div class="button-div"><button (click)="getNextTenMatches()">Get Next 10 Matches</button></div>
+  
 </div>

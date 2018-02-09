@@ -9,13 +9,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { SummonerDetailsComponent } from './summoner-details/summoner-details.component';
 import { SummonerService } from './summoner.service';
 import { MatchDetailsComponent } from './match-details/match-details.component';
+import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchbarComponent,
     SummonerDetailsComponent,
-    MatchDetailsComponent
+    MatchDetailsComponent,
+    SummonerBaseComponent
   ],
   imports: [
     BrowserModule,
