@@ -1,5 +1,5 @@
 <div class="searchbar">
 
-  <input [(ngModel)]="summonerName" type="text" placeholder="Enter Summoner Name" (keyup.enter)="PressedEnter($event)"/><a [class.disabled]="summonerNameInvalid()" routerLink="/summonerbase/{{summonerName}}"><button [class.disabled]="summonerNameInvalid()" class="data-button">Get Data</button></a>
-
+  <input [(ngModel)]="summonerName" type="text" placeholder="Enter Summoner Name" (keyup.enter)="PressedEnter($event)"/><a [class.disabled]="summonerNameInvalid()" routerLink="/summonerbase/{{summonerName}}"><div class="magnify-glass">&#9906;</div> Search</a>
+  
 </div>
