@@ -22,7 +22,6 @@ export class SummonerDetailsComponent implements OnInit {
   
   updateSummonerData(): void {
     var summonerName = this.route.parent.snapshot.paramMap.get('name');
-    console.log('hi');
 
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerData = summonerData;

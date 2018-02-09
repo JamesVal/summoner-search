@@ -12,7 +12,7 @@ export class SearchbarComponent implements OnInit {
 
   summonerName: string = "";
 
-  PressedEnter(evt) : void {
+  PressedEnter(evt): void {
     evt.target.blur();
     window.location.href = "./summonerbase/"+this.summonerName;
   }
