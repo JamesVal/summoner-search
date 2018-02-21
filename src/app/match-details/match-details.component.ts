@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import { SummonerService } from '../summoner.service';
 import { CreateExcelService } from '../create-excel.service';
@@ -28,6 +29,18 @@ class matchDetails {
   result: string;
 };
 
+class matchDetailsExcel {
+  date: string;
+  gameMode: string;
+  championName: string;
+  kills: number;
+  deaths: number;
+  assists: number;
+  team1: string;
+  team2: string;
+  result: string;
+}
+
 @Component({
   selector: 'app-match-details',
   templateUrl: './match-details.component.html',
@@ -39,13 +52,36 @@ export class MatchDetailsComponent implements OnInit {
   matchDataList: matchDetails[];
   summonerName: string;
   currentEndIndex: number;
+  matchDataExcelList: matchDetailsExcel[];
+  
+  convertToExcelObject(matchList: matchDetails[]): matchDetailsExcel[] {
+    var excelMatchList: matchDetailsExcel[] = [];
+    
+    for (var eachMatchIdx = 0; eachMatchIdx < matchList.length; eachMatchIdx++) {
+      var excelMatch = new matchDetailsExcel();
+      
+      excelMatch.date = this.datePipe.transform(matchList[eachMatchIdx].date,"short");
+      excelMatch.gameMode = matchList[eachMatchIdx].gameMode;
+      excelMatch.championName = matchList[eachMatchIdx].championName;
+      excelMatch.kills = matchList[eachMatchIdx].kda.kills;
+      excelMatch.deaths = matchList[eachMatchIdx].kda.deaths;
+      excelMatch.assists = matchList[eachMatchIdx].kda.assists;
+    
+      excelMatch.team1 = matchList[eachMatchIdx].teams[0].teamMembers[0] + ", " + matchList[eachMatchIdx].teams[0].teamMembers[1] + ", " + matchList[eachMatchIdx].teams[0].teamMembers[2] + ", " + matchList[eachMatchIdx].teams[0].teamMembers[3] + ", " + matchList[eachMatchIdx].teams[0].teamMembers[4];
+      
+      excelMatch.team2 = matchList[eachMatchIdx].teams[1].teamMembers[0] + ", " + matchList[eachMatchIdx].teams[1].teamMembers[1] + ", " + matchList[eachMatchIdx].teams[1].teamMembers[2] + ", " + matchList[eachMatchIdx].teams[1].teamMembers[3] + ", " + matchList[eachMatchIdx].teams[1].teamMembers[4];
+
+      excelMatch.result = matchList[eachMatchIdx].result;
+      
+      excelMatchList.push(excelMatch);
+    }
+    
+    return excelMatchList;
+  }
   
   saveData(): void {
-    // JJV DEBUG
-    console.log("saveData");
-    
     //We must format the object appropriately for this service
-    this.createExcelService.exportAsExcelFile(this.matchDataList, "test");
+    this.createExcelService.exportAsExcelFile(this.convertToExcelObject(this.matchDataList), "matchdata");
   }
   
   getSummonerParticipantId(summonerName: string, matchData: any): number {
@@ -243,7 +279,7 @@ export class MatchDetailsComponent implements OnInit {
     });
   }
   
-  constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService, private createExcelService: CreateExcelService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService, private createExcelService: CreateExcelService, private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.updateMatchData(0,10);

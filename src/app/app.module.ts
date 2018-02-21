@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule }    from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { SearchbarComponent } from './searchbar/searchbar.component';
@@ -26,7 +27,7 @@ import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [SummonerService, CreateExcelService],
+  providers: [SummonerService, CreateExcelService, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
