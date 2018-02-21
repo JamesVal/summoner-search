@@ -8,6 +8,7 @@ import { SearchbarComponent } from './searchbar/searchbar.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SummonerDetailsComponent } from './summoner-details/summoner-details.component';
 import { SummonerService } from './summoner.service';
+import { CreateExcelService } from './create-excel.service';
 import { MatchDetailsComponent } from './match-details/match-details.component';
 import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
 
@@ -25,7 +26,7 @@ import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [SummonerService],
+  providers: [SummonerService, CreateExcelService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

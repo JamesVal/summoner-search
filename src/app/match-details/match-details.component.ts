@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
 
 import { SummonerService } from '../summoner.service';
+import { CreateExcelService } from '../create-excel.service';
 
 class teamDetails {
   teamId: number;
@@ -39,6 +40,14 @@ export class MatchDetailsComponent implements OnInit {
   summonerName: string;
   currentEndIndex: number;
   
+  saveData(): void {
+    // JJV DEBUG
+    console.log("saveData");
+    
+    //We must format the object appropriately for this service
+    this.createExcelService.exportAsExcelFile(this.matchDataList, "test");
+  }
+  
   getSummonerParticipantId(summonerName: string, matchData: any): number {
     for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participantIdentities.length; eachParticipantIdx++) {
       if (summonerName.toLowerCase().replace(/\s/g,'') == matchData.participantIdentities[eachParticipantIdx].player.summonerName.toLowerCase().replace(/\s/g,'')) {
@@ -47,6 +56,10 @@ export class MatchDetailsComponent implements OnInit {
     }
     
     return -1; // error?
+  }
+  
+  isOdd(idx: number): boolean {
+    return ((idx & 0x01) == 1);
   }
   
   isSummoner(summonerName: string): boolean {
@@ -230,7 +243,7 @@ export class MatchDetailsComponent implements OnInit {
     });
   }
   
-  constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService, private createExcelService: CreateExcelService) { }
 
   ngOnInit() {
     this.updateMatchData(0,10);

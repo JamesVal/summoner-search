@@ -1,6 +1,8 @@
 <div *ngIf="matchDataList">
 
-  <div class="header">Match History</div>
+  <div class="header">
+    <div class="title-container"><div class="title-text">Match History</div></div><div class="excel-container"><div class="excel-button" (click)="saveData()">Export to Excel</div></div>
+  </div>
 
   <div class="match-div">
   
@@ -14,7 +16,7 @@
         <th width="14%">Team 2</th>
         <th width="14%">Result</th>
       </tr>
-      <tr *ngFor="let match of matchDataList">
+      <tr *ngFor="let match of matchDataList; index as idx" [ngClass]="isOdd(idx) ? 'odd' : 'even'">
         <td>{{match.date | date:'short'}}</td>
         <td>{{match.gameMode}}</td>
         <td><img *ngIf="match.championImg" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}" width="75"><br>{{match.championName}}</td>

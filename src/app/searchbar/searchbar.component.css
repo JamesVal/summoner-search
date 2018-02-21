@@ -1,5 +1,5 @@
 a {
-  border: 0px solid white;
+  border: 2px solid #F8F8F8;
   border-radius: 5px;
   cursor: pointer;
   text-decoration: none;
@@ -9,6 +9,14 @@ a {
   font-size: 16px;
   background-color: #63b4cf;
   color: white;
+}
+
+input:hover {
+  border: 2px solid #3691b0;
+}
+
+a:hover {
+  border: 2px solid #3691b0;
 }
 
 a.disabled {
