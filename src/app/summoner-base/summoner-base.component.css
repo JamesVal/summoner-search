@@ -20,3 +20,7 @@ a.active {
   color: black;
   text-decoration: underline;
 }
+
+.navigation-bar {
+  background-color: rgb(231, 230, 227);
+}

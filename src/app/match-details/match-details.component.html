@@ -1,7 +1,7 @@
 <div *ngIf="matchDataList">
 
   <div class="header">
-    <div class="title-container"><div class="title-text">Match History</div></div><div class="excel-container"><div class="excel-button" (click)="saveData()">Export to Excel</div></div>
+    <div class="title-container"><div class="title-text">Match History</div></div><div class="excel-container"><div style="display:none;" class="excel-button" (click)="saveData()">Export to Excel</div></div>
   </div>
 
   <div class="match-div">
@@ -29,6 +29,6 @@
     
   </div>
 
-  <div class="button-div"><span (click)="getNextTenMatches()">Get Next 10 Matches</span></div>
+  <div style="display: none;" class="button-div"><span (click)="getNextTenMatches()">Get Next 10 Matches</span></div>
   
 </div>

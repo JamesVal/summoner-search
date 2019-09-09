@@ -1,5 +1,4 @@
 a {
-  border: 2px solid #F8F8F8;
   border-radius: 5px;
   cursor: pointer;
   text-decoration: none;
@@ -7,16 +6,27 @@ a {
   padding: 5px 15px;
   font-family: arial;
   font-size: 16px;
-  background-color: #63b4cf;
-  color: white;
-}
-
-input:hover {
-  border: 2px solid #3691b0;
+  background-color: rgb(37, 36, 35);
+  color: rgb(201, 170, 113);
 }
 
 a:hover {
-  border: 2px solid #3691b0;
+  color: rgb(241, 230, 208);
+  text-decoration: underline;
+}
+
+input {
+  border: 1px solid gray;
+  padding: 4px;
+}
+
+input:hover {
+  border: 1px solid rgb(37, 36, 35);
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid rgb(37, 36, 35);
 }
 
 a.disabled {
@@ -34,4 +44,8 @@ a.disabled {
   -moz-transform: rotate(45deg); 
   -o-transform: rotate(45deg);
   transform: rotate(45deg);
+}
+
+.searchbar {
+  background-color: rgb(231, 230, 227);
 }

@@ -52,14 +52,19 @@
 .match-table th { border: 1px solid black; padding: 10px; }
 .match-table td { border: 1px solid black; padding: 10px; }
 */
+
+
+
+
 .match-table { text-align: center; border-collapse: collapse; font-family: arial; }
-.match-table th { padding: 10px; background-color: #63b4cf; color: white; }
-.match-table td { padding: 10px; }
+.match-table th { padding: 10px; background-color: rgb(37, 36, 35); color: rgb(201, 170, 113); }
+/*.match-table td { padding: 10px; color: rgb(241, 230, 208); }*/
+.match-table td { padding: 10px; color: rgb(231, 230, 227); }
 .match-table .win { color: blue; }
 .match-table .lose { color: red; }
 .match-table .current-summoner { font-weight: bold; }
-.match-table tr.odd { background-color: #b1d9e7; }
-.match-table tr.even { background-color: #d8ecf3; }
+.match-table tr.odd { background-color: rgb(138,136,135); }
+.match-table tr.even { background-color: rgb(101, 100,98); }
 
 
 .button-div { padding: 10px; margin-bottom: 20px; }
