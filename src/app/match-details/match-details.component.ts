@@ -240,6 +240,7 @@ export class MatchDetailsComponent implements OnInit {
     // JJV DEBUG - maybe want to revisit when to clear the list (i.e. if I decided to add a search by date input or something - we need to clear the data list based off of that event)
     if (beginIndex == 0) this.matchDataList = [];
     
+    /*
     this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
       this.summonerService.getRecentMatchDetailsByIndex(summonerData.accountId, beginIndex, endIndex).subscribe(recentMatchData => {
       //this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
@@ -277,19 +278,13 @@ export class MatchDetailsComponent implements OnInit {
         }
       });
     });
+    */
   }
   
   constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService, private createExcelService: CreateExcelService, private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.updateMatchData(0,10);
-    
-
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.updateMatchData(0,10);
-      }
-    });
   }
 
 }

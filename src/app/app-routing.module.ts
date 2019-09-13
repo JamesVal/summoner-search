@@ -15,7 +15,7 @@ const routes: Routes = [
 */
 
 const routes: Routes = [
-  { path: 'summonerbase/:name', component: SummonerBaseComponent, children: [
+  { path: 'summonerbase', component: SummonerBaseComponent, children: [
     { path: '',   redirectTo: 'summonerdetails', pathMatch: 'full' },
     { path: 'summonerdetails', component: SummonerDetailsComponent },
     { path: 'matchdetails', component: MatchDetailsComponent }

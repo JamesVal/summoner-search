@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
 import { Router } from '@angular/router';
+
+import { SummonerService } from '../summoner.service';
 
 @Component({
   selector: 'app-searchbar',
@@ -14,32 +15,23 @@ export class SearchbarComponent implements OnInit {
 
   PressedEnter(evt): void {
     evt.target.blur();
-    window.location.href = "./summonerbase/"+this.summonerName;
-  }
-  
-  updateSummonerData(): void {
-    if (this.route.firstChild) {
-      var summonerName = this.route.firstChild.snapshot.paramMap.get('name');
-
-      if (summonerName) this.summonerName = summonerName;
+    if (this.summonerNameValid()) {
+      this.summonerService.getSummonerData(this.summonerName);
+      this.router.navigate(["./summonerbase"]);
     }
   }
   
-  summonerNameInvalid(): boolean {
-    return (this.summonerName.length == 0);
+  onClick(evt): void {
+    if (this.summonerNameValid())
+      this.summonerService.getSummonerData(this.summonerName);
+  }
+
+  summonerNameValid(): boolean {
+    return (this.summonerName.length > 0);
   }
   
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private router: Router, private summonerService: SummonerService) { }
 
-  ngOnInit() {
-    
-  // Check if the route has updated
-  this.router.events.subscribe((event) => {
-    if (event instanceof NavigationEnd) {
-      this.updateSummonerData();
-    }
-  });
-    
-  }
+  ngOnInit() {}
 
 }

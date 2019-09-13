@@ -1,12 +1,12 @@
-<div *ngIf="summonerData">
+<div *ngIf="summonerDetails">
 
   <div class="header">Summoner Details</div>
   
   <div class="details">
   
-    <img *ngIf="iconFull" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/profileicon/{{iconFull}}" width="100">
-    Name: {{ summonerData.name }}<br>
-    Summoner Level: {{ summonerData.summonerLevel }}
+    <img *ngIf="summonerDetails.iconFull" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/profileicon/{{summonerDetails.iconFull}}" width="100">
+    Name: {{ summonerDetails.name }}<br>
+    Summoner Level: {{ summonerDetails.summonerLevel }}
     
   </div>
   
