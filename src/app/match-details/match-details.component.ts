@@ -3,8 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
-import { SummonerService, teamDetails, KDA, matchDetails } from '../summoner.service';
+import { SummonerService, SummonerDetails } from '../summoner.service';
 import { CreateExcelService } from '../create-excel.service';
 
 class matchDetailsExcel {
@@ -19,6 +20,28 @@ class matchDetailsExcel {
   result: string;
 }
 
+class teamDetails {
+  teamId: number;
+  teamMembers: string[];
+}
+
+class KDA {
+  kills: number;
+  deaths: number;
+  assists: number;
+}
+
+class matchDetails {
+  date: number;
+  gameMode: string;
+  championId: number;
+  championName: string;
+  championImg: string;
+  kda: KDA;
+  teams: teamDetails[];
+  result: string;
+};
+
 @Component({
   selector: 'app-match-details',
   templateUrl: './match-details.component.html',
@@ -26,10 +49,13 @@ class matchDetailsExcel {
 })
 export class MatchDetailsComponent implements OnInit {
 
+  matchDetailsSub: Subscription = new Subscription();
+  summonerDetailsSub: Subscription = new Subscription();
+  summonerDetails: SummonerDetails = new SummonerDetails();
+
   // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
-  matchDataList: matchDetails[];
-  summonerName: string;
-  currentEndIndex: number;
+  matchDataList: matchDetails[] = [];
+
   matchDataExcelList: matchDetailsExcel[];
   
   convertToExcelObject(matchList: matchDetails[]): matchDetailsExcel[] {
@@ -77,7 +103,7 @@ export class MatchDetailsComponent implements OnInit {
   }
   
   isSummoner(summonerName: string): boolean {
-    return (summonerName.toLowerCase().replace(/\s/g,'') == this.summonerName.toLowerCase().replace(/\s/g,''));
+    return (summonerName.toLowerCase().replace(/\s/g,'') == this.summonerDetails.name.toLowerCase().replace(/\s/g,''));
   }
 
   getSummonerChampionId(participantId: number, matchData: any): number {
@@ -153,23 +179,11 @@ export class MatchDetailsComponent implements OnInit {
       }
     }
     
-    // JJV DEBUG - need an error check of some sort here
-    
     return kda;
   }
   
-  setChampionData(matchList: matchDetails[], championData: any): void {
-    for (var eachMatchIdx = 0; eachMatchIdx < matchList.length; eachMatchIdx++) {
-      if (championData.key == matchList[eachMatchIdx].championId) {
-        matchList[eachMatchIdx].championName = championData.name;
-        matchList[eachMatchIdx].championImg = championData.image.full;
-      }
-    }
-  }
-  
-  // JJV DEBUG - maybe revisit the global summoner name?
   createMatchDetails(matchData: any): matchDetails {
-    var summonerName = this.route.parent.snapshot.paramMap.get('name');
+    var summonerName = this.summonerDetails.name;
     
     var curData = new matchDetails();
     curData.date = matchData.gameCreation;
@@ -205,64 +219,50 @@ export class MatchDetailsComponent implements OnInit {
     return curData;
   }
   
-  getNextTenMatches(): void {
-    this.updateMatchData(this.currentEndIndex,this.currentEndIndex+10);
-  }
-  
-  updateMatchData(beginIndex: number, endIndex: number): void {
-    var summonerName = this.route.parent.snapshot.paramMap.get('name');
-
-    this.summonerName = summonerName;
-    this.currentEndIndex = endIndex;
-    
-    // JJV DEBUG - maybe want to revisit when to clear the list (i.e. if I decided to add a search by date input or something - we need to clear the data list based off of that event)
-    if (beginIndex == 0) this.matchDataList = [];
-    
-    /*
-    this.summonerService.getSummonerData(summonerName).subscribe(summonerData => {
-      this.summonerService.getRecentMatchDetailsByIndex(summonerData.accountId, beginIndex, endIndex).subscribe(recentMatchData => {
-      //this.summonerService.getRecentMatchDetails(summonerData.accountId).subscribe(recentMatchData => {
-
-        // JJV DEBUG - only get the last 10 recent matches due to rate limiting on the API
-        var maxToShow = recentMatchData.matches.length;
-        if (maxToShow > 10) maxToShow = 10;
-        
-        for (var eachMatchIdx = 0; eachMatchIdx < maxToShow; eachMatchIdx++) {
-        //for (var eachMatchIdx = 0; eachMatchIdx < maxToShow; eachMatchIdx++) {
-          this.summonerService.getMatchDetails(recentMatchData.matches[eachMatchIdx].gameId).subscribe(matchData => {
-            
-            var newMatchDetails = this.createMatchDetails(matchData);
-
-            this.matchDataList.push(newMatchDetails);
-            
-            var sortedMatches = this.matchDataList.sort((n1,n2) => {
-              if (n2.date > n1.date) {
-                return 1;
-              } else if (n1.date > n2.date) {
-                return -1;
-              }
-          
-              return 0;
-            });
-            
-            this.matchDataList = sortedMatches;
-            
-            // This originally was an API call but instead am now just using a static file that is hosted server-side (which itself was downloaded from Data Dragon - We can't use Riot's API here because Static Data is heavily rate-limited
-            this.summonerService.getChampionDetails(newMatchDetails.championId).subscribe(championData => {
-              this.setChampionData(this.matchDataList, championData);
-            });
-
-          });
-        }
-      });
-    });
-    */
-  }
-  
   constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService, private createExcelService: CreateExcelService, private datePipe: DatePipe) { }
 
   ngOnInit() {
-    this.updateMatchData(0,10);
+    this.summonerDetailsSub = this.summonerService.summonerDetailsReady.subscribe((dataReady) => {
+      if (dataReady) {
+        this.summonerDetails = this.summonerService.getSummonerInfo();
+      } else {
+        this.summonerDetails = null;
+      }
+    });
+
+    this.matchDetailsSub = this.summonerService.matchDataReady.subscribe((dataReady) => {
+      if (dataReady) {
+        var allMatchDetailData = this.summonerService.getMatchInfo();
+
+        for (let i = 0; i < allMatchDetailData.length; i++) {
+          var newMatchDetails = this.createMatchDetails(allMatchDetailData[i]);
+          var championDetails = this.summonerService.getChampionDetails(newMatchDetails.championId);
+
+          newMatchDetails.championName = championDetails.name;
+          newMatchDetails.championImg = championDetails.image.full;
+
+          this.matchDataList.push(newMatchDetails);
+          /*
+          var sortedMatches = this.matchDataList.sort((n1,n2) => {
+            if (n2.date > n1.date) {
+              return 1;
+            } else if (n1.date > n2.date) {
+              return -1;
+            }
+        
+            return 0;
+          });
+          
+          this.matchDataList = sortedMatches;
+          */
+        }
+      } else {
+        this.matchDataList = [];
+      }
+    });
   }
 
+  ngOnDestroy() {
+    this.summonerDetailsSub.unsubscribe();
+  }
 }

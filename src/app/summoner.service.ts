@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, concatAll } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 
 // JJV DEBUG - for testing
@@ -17,52 +17,28 @@ import { environment } from '../environments/environment';
 
 export class SummonerDetails {
   name: string;
-  summonerLevel: string;
+  summonerLevel: number;
   iconFull: string;
+  accountId: string;
+  id: string;
 }
-
-export class teamDetails {
-  teamId: number;
-  teamMembers: string[];
-}
-
-export class KDA {
-  kills: number;
-  deaths: number;
-  assists: number;
-}
-
-export class matchDetails {
-  date: number;
-  gameMode: string;
-  championId: number;
-  championName: string;
-  championImg: string;
-  kda: KDA;
-  teams: teamDetails[];
-  result: string;
-};
 
 @Injectable()
 export class SummonerService {
 
   private summonerDataURL = 'api/riotAPI/getSummoner/';
   private recentMatchesURL = 'api/riotAPI/getRecentMatches/'
-  private recentMatchesByIndexURL = 'api/riotAPI/getRecentMatchesByIndex/'
   private matchDataURL = 'api/riotAPI/getMatch/';
-  private championDataURL = 'api/riotAPI/getChampion/';
   private summonerAccountId : number;
   summonerName: string = "";
   
-  summonerObservable: Observable<any>;
-  summonerDetails: SummonerDetails = new SummonerDetails();
+  summonerDetails: SummonerDetails;
   summonerDetailsReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  matchesObservable: Observable<any>;
-  matchDetails: matchDetails[] = [];
-  matchDetailsReady: BehaviorSubject<boolean> = new BehaviorSubject(false); 
+  matchData: any = [];
+  matchDataReady: BehaviorSubject<boolean> = new BehaviorSubject(false); 
 
-  getSummonerDetails(): SummonerDetails {
+  getSummonerInfo(): SummonerDetails {
     return this.summonerDetails;
   }
 
@@ -71,27 +47,64 @@ export class SummonerService {
     if (!this.summonerName) return;
 
     this.summonerDetailsReady.next(false);
+    this.summonerDetails = new SummonerDetails();
 
-    /*this.summonerObservable = of(testSummonerData);*/
-    this.summonerObservable = this.http.get<any>(environment.hostURL+this.summonerDataURL+this.summonerName);
+    this.matchDataReady.next(false);
+    this.matchData = [];
 
-    this.summonerObservable.pipe(
+    this.getSummonerDetails().pipe(
       concatMap((data) => {
         this.summonerDetails.name = data.name;
         this.summonerDetails.summonerLevel = data.summonerLevel;
-        return this.getProfileIconDetails(data.profileIconId);
+        this.summonerDetails.accountId = data.accountId;
+        this.summonerDetails.id = data.id;
+        this.summonerDetails.iconFull = this.getProfileIconDetails(data.profileIconId).image.full;
+        this.summonerDetailsReady.next(true);
+        return this.getRecentMatches();
       }),
       concatMap((data) => {
-        this.summonerDetails.iconFull = data.image.full;
-        return of(1);
+        return this.getMatchDetails(data.matches);
       }),
-    ).subscribe((data) => {
-      this.summonerDetailsReady.next(true);
+      concatAll()
+    ).subscribe({
+      next: (data) => {
+        this.matchData.push(data);
+      },
+      complete: () => {
+        this.matchDataReady.next(true);
+      }
     });
   }
 
-  getProfileIconDetails(iconId: number): Observable<any> {
-    
+  getSummonerDetails(): Observable<any> {
+    return of(testSummonerData);
+    //return this.http.get<any>(environment.hostURL+this.summonerDataURL+this.summonerName);
+  }
+
+  getRecentMatches(): Observable<any> {
+    // JJV DEBUG - Spoof test object since server will not always be running
+    return of(testRecentMatchData);
+    //return this.http.get<any>(environment.hostURL+this.recentMatchesURL+this.summonerDetails.accountId);
+  }
+   
+  getMatchDetails(matchArray): Observable<any> {
+    let maxLength = matchArray.length;
+    if (maxLength > 25) maxLength = 25;
+
+    return new Observable((observer) => {
+      for (let i = 0; i < maxLength; i++) {
+        observer.next(of(testMatchInformation));
+        //observer.next(this.http.get<any>(environment.hostURL+this.matchDataURL+matchArray[i].gameId));
+      }
+      observer.complete();
+    });
+  }
+ 
+  getMatchInfo(): any[] {
+    return this.matchData;
+  } 
+
+  getProfileIconDetails(iconId: number): any {
     var iconObj: any;
     
     for (var key in profileIconInformation.data) {
@@ -100,37 +113,11 @@ export class SummonerService {
       }
     }
     
-    return of(iconObj);
+    return iconObj;
   }
 
-  getRecentMatchDetails(accountId: number): Observable<any> {
-    // JJV DEBUG - Spoof test object since server will not always be running
-    return of(testRecentMatchData);
-    
-    //return this.http.get<any>(this.recentMatchesURL+accountId);
-  }
-  
-  getRecentMatchDetailsByIndex(accountId: number, beginIndex: number, endIndex: number): Observable<any> {
-    // JJV DEBUG - Spoof test object since server will not always be running
-    return of(testRecentMatchData);
-    
-    //return this.http.get<any>(this.recentMatchesByIndexURL+accountId+"?beginIndex="+beginIndex+"&endIndex="+endIndex);
-  } 
-  
-  getMatchDetails(matchId: number): Observable<any> {
-    // JJV DEBUG - Spoof test object since server will not always be running
-    return of(testMatchInformation);
-    
-    //return this.http.get<any>(this.matchDataURL+matchId);
-  }
-    
-  getChampionDetails(championId: number): Observable<any> {
+  getChampionDetails(championId: number): any {
     // We're no longer doing the API call as the Static Data API is heavily rate-limited, instead just use Data Dragon
-    // JJV DEBUG - Spoof test object since server will not always be running
-    //return of(testChampionInformation);
-    
-    //return this.http.get<any>(this.championDataURL+championId);
-    
     var championObj: any;
     
     for (var key in allChampionInformation.data) {
@@ -139,10 +126,8 @@ export class SummonerService {
       }
     }
     
-    return of(championObj);
+    return championObj;
   }
   
-    
   constructor(private http: HttpClient) { }
-
 }

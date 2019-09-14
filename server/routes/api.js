@@ -30,7 +30,7 @@ router.get('/riotAPI/getRecentMatches/:accountId', (req, res) => {
   const accountId = req.params.accountId;
   const queueId = 450;
   
-  axios.get(`${API}/lol/match/v4/matchlists/by-account/${accountId}/recent?api_key=${riotKey.mykey}&queue=${queueId}`)
+  axios.get(`${API}/lol/match/v4/matchlists/by-account/${accountId}?api_key=${riotKey.mykey}&queue=${queueId}`)
     .then(posts => {
       res.status(200).json(posts.data);
     })
@@ -56,7 +56,7 @@ router.get('/riotAPI/getRecentMatchesByIndex/:accountId', (req, res) => {
 router.get('/riotAPI/getMatch/:matchId', (req, res) => {
   const matchId = req.params.matchId;
   
-  axios.get(`${API}/lol/match/v3/matches/${matchId}?api_key=${riotKey.mykey}`)
+  axios.get(`${API}/lol/match/v4/matches/${matchId}?api_key=${riotKey.mykey}`)
     .then(posts => {
       res.status(200).json(posts.data);
     })

@@ -18,7 +18,7 @@ export class SummonerDetailsComponent implements OnInit {
   ngOnInit() {
     this.summonerDetailsSub = this.summonerService.summonerDetailsReady.subscribe((dataReady) => {
       if (dataReady) {
-        this.summonerDetails = this.summonerService.getSummonerDetails();
+        this.summonerDetails = this.summonerService.getSummonerInfo();
       } else {
         this.summonerDetails = null;
       }
