@@ -4,30 +4,8 @@ import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
-import { SummonerService } from '../summoner.service';
+import { SummonerService, teamDetails, KDA, matchDetails } from '../summoner.service';
 import { CreateExcelService } from '../create-excel.service';
-
-class teamDetails {
-  teamId: number;
-  teamMembers: string[];
-}
-
-class KDA {
-  kills: number;
-  deaths: number;
-  assists: number;
-}
-
-class matchDetails {
-  date: number;
-  gameMode: string;
-  championId: number;
-  championName: string;
-  championImg: string;
-  kda: KDA;
-  teams: teamDetails[];
-  result: string;
-};
 
 class matchDetailsExcel {
   date: string;

@@ -9,17 +9,39 @@ import { of } from 'rxjs/observable/of';
 import { testSummonerData } from './test-data';
 import { testRecentMatchData } from './test-data';
 import { testMatchInformation } from './test-data';
-import { testAllChampionInformation } from './test-data';
-import { testChampionInformation } from './test-data';
 
 import { allChampionInformation } from './champion-static-data';
 import { profileIconInformation } from './profile-icon-static-data';
+
+import { environment } from '../environments/environment';
 
 export class SummonerDetails {
   name: string;
   summonerLevel: string;
   iconFull: string;
 }
+
+export class teamDetails {
+  teamId: number;
+  teamMembers: string[];
+}
+
+export class KDA {
+  kills: number;
+  deaths: number;
+  assists: number;
+}
+
+export class matchDetails {
+  date: number;
+  gameMode: string;
+  championId: number;
+  championName: string;
+  championImg: string;
+  kda: KDA;
+  teams: teamDetails[];
+  result: string;
+};
 
 @Injectable()
 export class SummonerService {
@@ -30,10 +52,15 @@ export class SummonerService {
   private matchDataURL = 'api/riotAPI/getMatch/';
   private championDataURL = 'api/riotAPI/getChampion/';
   private summonerAccountId : number;
-  private summonerName: string;
+  summonerName: string = "";
   
+  summonerObservable: Observable<any>;
   summonerDetails: SummonerDetails = new SummonerDetails();
   summonerDetailsReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  matchesObservable: Observable<any>;
+  matchDetails: matchDetails[] = [];
+  matchDetailsReady: BehaviorSubject<boolean> = new BehaviorSubject(false); 
 
   getSummonerDetails(): SummonerDetails {
     return this.summonerDetails;
@@ -45,9 +72,12 @@ export class SummonerService {
 
     this.summonerDetailsReady.next(false);
 
-    of(testSummonerData).pipe(
+    /*this.summonerObservable = of(testSummonerData);*/
+    this.summonerObservable = this.http.get<any>(environment.hostURL+this.summonerDataURL+this.summonerName);
+
+    this.summonerObservable.pipe(
       concatMap((data) => {
-        this.summonerDetails.name = this.summonerName;
+        this.summonerDetails.name = data.name;
         this.summonerDetails.summonerLevel = data.summonerLevel;
         return this.getProfileIconDetails(data.profileIconId);
       }),
@@ -58,30 +88,6 @@ export class SummonerService {
     ).subscribe((data) => {
       this.summonerDetailsReady.next(true);
     });
-
-
-    /*this.summonerData.emit(testSummonerData);*/
-    /*
-    this.http.get<any>(this.summonerDataURL+name).subscribe((data) => {
-      this.summonerData.emit(data);
-    });
-    */
-/*    
-    if (name != this.summonerName) {
-      this.summonerName = name;
-      this.summonerData$ = null;
-    }
-    
-    if (this.summonerData$) {
-      return (this.summonerData$);
-    }
-    
-    // JJV DEBUG - Spoof test object since server will not always be running
-    this.summonerData$ = of(testSummonerData);    
-    //this.summonerData$ = this.http.get<any>(this.summonerDataURL+name);
-    
-    return (this.summonerData$);
-*/
   }
 
   getProfileIconDetails(iconId: number): Observable<any> {

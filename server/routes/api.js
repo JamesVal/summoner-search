@@ -16,19 +16,21 @@ router.get('/', (req, res) => {
 router.get('/riotAPI/getSummoner/:name', (req, res) => {
   const name = req.params.name;
   
-  axios.get(`${API}/lol/summoner/v3/summoners/by-name/${name}?api_key=${riotKey.mykey}`)
+  axios.get(`${API}/lol/summoner/v4/summoners/by-name/${name}?api_key=${riotKey.mykey}`)
     .then(posts => {
       res.status(200).json(posts.data);
     })
     .catch(error => {
+      console.log(error)
       res.status(500).send(error)
     });
 });
 
 router.get('/riotAPI/getRecentMatches/:accountId', (req, res) => {
   const accountId = req.params.accountId;
+  const queueId = 450;
   
-  axios.get(`${API}/lol/match/v3/matchlists/by-account/${accountId}/recent?api_key=${riotKey.mykey}`)
+  axios.get(`${API}/lol/match/v4/matchlists/by-account/${accountId}/recent?api_key=${riotKey.mykey}&queue=${queueId}`)
     .then(posts => {
       res.status(200).json(posts.data);
     })

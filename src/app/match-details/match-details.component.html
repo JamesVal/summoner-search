@@ -19,7 +19,7 @@
       <tr *ngFor="let match of matchDataList; index as idx" [ngClass]="isOdd(idx) ? 'odd' : 'even'">
         <td>{{match.date | date:'short'}}</td>
         <td>{{match.gameMode}}</td>
-        <td><img *ngIf="match.championImg" src="http://ddragon.leagueoflegends.com/cdn/8.1.1/img/champion/{{match.championImg}}" width="75"><br>{{match.championName}}</td>
+        <td><img *ngIf="match.championImg" src="http://ddragon.leagueoflegends.com/cdn/9.3.1/img/champion/{{match.championImg}}" width="75"><br>{{match.championName}}</td>
         <td>{{match.kda.kills}}/{{match.kda.deaths}}/{{match.kda.assists}}</td>
         <td><div *ngFor="let teamMember of match.teams[0].teamMembers"><span [class.current-summoner]="isSummoner(teamMember)">{{teamMember}}</span></div></td>
         <td><div *ngFor="let teamMember of match.teams[1].teamMembers"><span [class.current-summoner]="isSummoner(teamMember)">{{teamMember}}</span></div></td>

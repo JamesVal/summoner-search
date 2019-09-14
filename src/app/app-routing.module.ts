@@ -5,6 +5,8 @@ import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
 import { SummonerDetailsComponent }  from './summoner-details/summoner-details.component';
 import { MatchDetailsComponent }     from './match-details/match-details.component';
 
+import { AuthGuard } from './auth/auth.guard';
+
 /*
 const routes: Routes = [
   { path: 'summonerdetails/:name', component: SummonerDetailsComponent, children: [
@@ -19,7 +21,7 @@ const routes: Routes = [
     { path: '',   redirectTo: 'summonerdetails', pathMatch: 'full' },
     { path: 'summonerdetails', component: SummonerDetailsComponent },
     { path: 'matchdetails', component: MatchDetailsComponent }
-  ]}
+  ], canActivate: [AuthGuard]}
 ];
 
 @NgModule({

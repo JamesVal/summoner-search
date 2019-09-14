@@ -13,6 +13,8 @@ import { CreateExcelService } from './create-excel.service';
 import { MatchDetailsComponent } from './match-details/match-details.component';
 import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
 
+import { AuthGuard } from './auth/auth.guard';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +29,7 @@ import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [SummonerService, CreateExcelService, DatePipe],
+  providers: [SummonerService, CreateExcelService, DatePipe, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
