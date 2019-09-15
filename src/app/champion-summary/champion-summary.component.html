@@ -1,0 +1,26 @@
+<div *ngIf="championDataList">
+
+  <div class="header">
+    <div class="title-text">Champion Summary</div>
+  </div>
+
+  <div class="champion-div">
+  
+      <table class="champion-table" width="100%">
+      <tr>
+        <th width="25%">Champion</th>
+        <th width="25%">K/D/A</th>
+        <th width="25%">Matches Played</th>
+        <th width="25%">Record</th>
+      </tr>
+      <tr *ngFor="let champion of championDataList; index as idx" [ngClass]="isOdd(idx) ? 'odd' : 'even'">
+        <td><img *ngIf="champion.championImg" src="http://ddragon.leagueoflegends.com/cdn/9.3.1/img/champion/{{champion.championImg}}" width="75"><br>{{champion.championName}}</td>
+        <td>{{champion.kda.kills}}/{{champion.kda.deaths}}/{{champion.kda.assists}}</td>
+        <td>{{champion.matchesPlayed}}</td>
+        <td>{{champion.wins}}-{{champion.losses}}</td>
+      </tr>
+    </table>
+    
+  </div>
+
+ </div> 

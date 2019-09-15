@@ -1,0 +1,35 @@
+.header {
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: left;
+  font-size: 18px;
+  font-family: arial;
+  font-weight: bold;
+}
+
+.champion-div { text-align: center; padding: 20px; }
+
+.champion-table { text-align: center; border-collapse: collapse; font-family: arial; }
+.champion-table th { padding: 10px; background-color: rgb(37, 36, 35); color: rgb(201, 170, 113); }
+.champion-table td { padding: 10px; color: /*rgb(231, 230, 227);*/rgb(241, 230, 208); }
+.champion-table tr.odd { background-color: rgb(138,136,135); }
+.champion-table tr.even { background-color: rgb(101, 100,98); }
+
+.button-div { padding: 10px; margin-bottom: 20px; }
+.button-div span {
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  background-color: #63b4cf;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: arial;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}

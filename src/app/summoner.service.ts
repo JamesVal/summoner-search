@@ -77,24 +77,24 @@ export class SummonerService {
   }
 
   getSummonerDetails(): Observable<any> {
-    return of(testSummonerData);
-    //return this.http.get<any>(environment.hostURL+this.summonerDataURL+this.summonerName);
+    //return of(testSummonerData);
+    return this.http.get<any>(environment.hostURL+this.summonerDataURL+this.summonerName);
   }
 
   getRecentMatches(): Observable<any> {
     // JJV DEBUG - Spoof test object since server will not always be running
-    return of(testRecentMatchData);
-    //return this.http.get<any>(environment.hostURL+this.recentMatchesURL+this.summonerDetails.accountId);
+    //return of(testRecentMatchData);
+    return this.http.get<any>(environment.hostURL+this.recentMatchesURL+this.summonerDetails.accountId);
   }
    
   getMatchDetails(matchArray): Observable<any> {
     let maxLength = matchArray.length;
-    if (maxLength > 25) maxLength = 25;
+    if (maxLength > 80) maxLength = 80;
 
     return new Observable((observer) => {
       for (let i = 0; i < maxLength; i++) {
-        observer.next(of(testMatchInformation));
-        //observer.next(this.http.get<any>(environment.hostURL+this.matchDataURL+matchArray[i].gameId));
+        //observer.next(of(testMatchInformation));
+        observer.next(this.http.get<any>(environment.hostURL+this.matchDataURL+matchArray[i].gameId));
       }
       observer.complete();
     });

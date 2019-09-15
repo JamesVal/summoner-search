@@ -24,3 +24,7 @@ a.active {
 .navigation-bar {
   background-color: rgb(231, 230, 227);
 }
+
+.divider {
+  padding: 5px;
+}

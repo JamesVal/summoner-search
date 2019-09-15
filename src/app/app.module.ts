@@ -12,7 +12,8 @@ import { SummonerService } from './summoner.service';
 import { CreateExcelService } from './create-excel.service';
 import { MatchDetailsComponent } from './match-details/match-details.component';
 import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
-
+import { ChampionSummaryComponent } from './champion-summary/champion-summary.component';
+import { MatchDataHelper } from './match-data-helper'.
 import { AuthGuard } from './auth/auth.guard';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { AuthGuard } from './auth/auth.guard';
     SearchbarComponent,
     SummonerDetailsComponent,
     MatchDetailsComponent,
-    SummonerBaseComponent
+    SummonerBaseComponent,
+    ChampionSummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +31,7 @@ import { AuthGuard } from './auth/auth.guard';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [SummonerService, CreateExcelService, DatePipe, AuthGuard],
+  providers: [SummonerService, CreateExcelService, DatePipe, AuthGuard, MatchDataHelper],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

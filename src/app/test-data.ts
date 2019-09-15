@@ -1,4 +1,13 @@
-export const testSummonerData : any = {"id":67972542,"accountId":228054520,"name":"ShuntStick","profileIconId":982,"revisionDate":1515464902000,"summonerLevel":46};
+export const testSummonerData : any = {
+    "profileIconId": 3381,
+    "name": "ShuntStick",
+    "puuid": "4UyaEdB0JPjsh-NpJrMrYPzSVcwdJkndi5fiELe_guzO59gL9ebdmRxZyu01kJuSr2hepZ2f9u4fYw",
+    "summonerLevel": 226,
+    "accountId": "y51KncyyCqO2JDGsbLaVCFwAbcajI3WebeSpdPHzyAhBjRQ",
+    "id": "ePijM0fYL6JMwUeN9EAnlBRNcDBRsWA8yqCScsWjC3hw7eU",
+    "revisionDate": 1568452453000
+};
+
 export const testMatchInformation: any = {
     "seasonId": 13,
     "queueId": 450,

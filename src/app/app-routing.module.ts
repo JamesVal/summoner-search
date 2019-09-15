@@ -4,6 +4,7 @@ import { RouterModule, Routes }      from '@angular/router';
 import { SummonerBaseComponent } from './summoner-base/summoner-base.component';
 import { SummonerDetailsComponent }  from './summoner-details/summoner-details.component';
 import { MatchDetailsComponent }     from './match-details/match-details.component';
+import { ChampionSummaryComponent } from './champion-summary/champion-summary.component';
 
 import { AuthGuard } from './auth/auth.guard';
 
@@ -21,6 +22,7 @@ const routes: Routes = [
     { path: '',   redirectTo: 'summonerdetails', pathMatch: 'full' },
     { path: 'summonerdetails', component: SummonerDetailsComponent },
     { path: 'matchdetails', component: MatchDetailsComponent }
+    { path: 'championsummary', component: ChampionSummaryComponent }
   ], canActivate: [AuthGuard]}
 ];
 

@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-import { NavigationEnd } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SummonerService, SummonerDetails } from '../summoner.service';
 import { CreateExcelService } from '../create-excel.service';
+import { MatchDataHelper, KDA, MatchDetails } from '../match-data-helper';
 
 class matchDetailsExcel {
   date: string;
@@ -20,27 +18,14 @@ class matchDetailsExcel {
   result: string;
 }
 
-class teamDetails {
+class TeamDetails {
   teamId: number;
   teamMembers: string[];
 }
 
-class KDA {
-  kills: number;
-  deaths: number;
-  assists: number;
+class MatchDetailsTeams extends MatchDetails {
+  teams: TeamDetails[];
 }
-
-class matchDetails {
-  date: number;
-  gameMode: string;
-  championId: number;
-  championName: string;
-  championImg: string;
-  kda: KDA;
-  teams: teamDetails[];
-  result: string;
-};
 
 @Component({
   selector: 'app-match-details',
@@ -49,16 +34,15 @@ class matchDetails {
 })
 export class MatchDetailsComponent implements OnInit {
 
-  matchDetailsSub: Subscription = new Subscription();
   summonerDetailsSub: Subscription = new Subscription();
   summonerDetails: SummonerDetails = new SummonerDetails();
+  matchDetailsSub: Subscription = new Subscription();
 
-  // Decided not to define the API response since the order it actually responds in doesn't match the order specified in their documentation - so now I just grab whatever object that is returned
-  matchDataList: matchDetails[] = [];
+  matchDataList: MatchDetails[] = [];
 
   matchDataExcelList: matchDetailsExcel[];
   
-  convertToExcelObject(matchList: matchDetails[]): matchDetailsExcel[] {
+  convertToExcelObject(matchList: MatchDetails[]): matchDetailsExcel[] {
     var excelMatchList: matchDetailsExcel[] = [];
     
     for (var eachMatchIdx = 0; eachMatchIdx < matchList.length; eachMatchIdx++) {
@@ -88,16 +72,6 @@ export class MatchDetailsComponent implements OnInit {
     this.createExcelService.exportAsExcelFile(this.convertToExcelObject(this.matchDataList), "matchdata");
   }
   
-  getSummonerParticipantId(summonerName: string, matchData: any): number {
-    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participantIdentities.length; eachParticipantIdx++) {
-      if (summonerName.toLowerCase().replace(/\s/g,'') == matchData.participantIdentities[eachParticipantIdx].player.summonerName.toLowerCase().replace(/\s/g,'')) {
-        return matchData.participantIdentities[eachParticipantIdx].participantId;
-      }
-    }
-    
-    return -1; // error?
-  }
-  
   isOdd(idx: number): boolean {
     return ((idx & 0x01) == 1);
   }
@@ -106,32 +80,12 @@ export class MatchDetailsComponent implements OnInit {
     return (summonerName.toLowerCase().replace(/\s/g,'') == this.summonerDetails.name.toLowerCase().replace(/\s/g,''));
   }
 
-  getSummonerChampionId(participantId: number, matchData: any): number {
-    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
-      if (participantId == matchData.participants[eachParticipantIdx].participantId) {
-        return matchData.participants[eachParticipantIdx].championId;
-      }
-    }
-    
-    return -1; // error?
-  }
-  
-  getParticipantName(participantId: number, matchData: any): string {
-    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participantIdentities.length; eachParticipantIdx++) {
-      if (participantId == matchData.participantIdentities[eachParticipantIdx].participantId) {
-        return matchData.participantIdentities[eachParticipantIdx].player.summonerName;
-      }
-    }
-    
-    return ""; // error?
-  }
-  
   getTeamMembers(teamId: number, matchData: any): string[] {
     var teamMembers: string[] = [];
     
     for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
       if (teamId == matchData.participants[eachParticipantIdx].teamId) {
-        var partipantname = this.getParticipantName(matchData.participants[eachParticipantIdx].participantId,matchData);
+        var partipantname = this.matchDataHelper.getParticipantName(matchData.participants[eachParticipantIdx].participantId, matchData);
         teamMembers.push(partipantname);
       }
     }
@@ -156,70 +110,23 @@ export class MatchDetailsComponent implements OnInit {
     
     return teamNumbers;
   }
-  
-  getMatchResult(participantId: number, matchData: any): boolean {
-    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
-      if (participantId == matchData.participants[eachParticipantIdx].participantId) {
-        return matchData.participants[eachParticipantIdx].stats.win;
-      }
-    }
-    
-    // error ?
-    return false;
-  }
-  
-  getParticipantKDA(participantId: number, matchData: any): KDA {
-    var kda = new KDA();
-    
-    for (var eachParticipantIdx = 0; eachParticipantIdx < matchData.participants.length; eachParticipantIdx++) {
-      if (participantId == matchData.participants[eachParticipantIdx].participantId) {
-        kda.kills = matchData.participants[eachParticipantIdx].stats.kills;
-        kda.deaths = matchData.participants[eachParticipantIdx].stats.deaths;
-        kda.assists = matchData.participants[eachParticipantIdx].stats.assists;
-      }
-    }
-    
-    return kda;
-  }
-  
-  createMatchDetails(matchData: any): matchDetails {
-    var summonerName = this.summonerDetails.name;
-    
-    var curData = new matchDetails();
-    curData.date = matchData.gameCreation;
-    curData.gameMode = matchData.gameMode;
-            
-    var participantId = this.getSummonerParticipantId(summonerName, matchData);
-    var championId = this.getSummonerChampionId(participantId, matchData);
-    curData.championId = championId;
-    curData.championName = "";
-    curData.championImg = "";
-    
-    curData.kda = this.getParticipantKDA(participantId, matchData);
-    
-    var result = this.getMatchResult(participantId, matchData);
-    if (result) {
-      curData.result = "Win";
-    } else {
-      curData.result = "Loss";
-    }
-           
-    curData.teams = [];
+
+  getTeamDetails(matchData: any): TeamDetails[] {
+    let teamDetails = [];
+
     var teamNumbers: number[] = [];
     teamNumbers = this.getTeamNumbers(matchData);            
     for (var eachTeamIdx = 0; eachTeamIdx < teamNumbers.length; eachTeamIdx++) {
-      var team = new teamDetails();
+      var team = new TeamDetails();
       team.teamId = teamNumbers[eachTeamIdx];
-      team.teamMembers = this.getTeamMembers(teamNumbers[eachTeamIdx],matchData);
-      curData.teams.push(team);
+      team.teamMembers = this.getTeamMembers(teamNumbers[eachTeamIdx], matchData);
+      teamDetails.push(team);
     }
-    
-    // JJV DEBUG - need an error check of some sort here
-    
-    return curData;
+
+    return teamDetails;
   }
-  
-  constructor(private route: ActivatedRoute, private router: Router, private summonerService: SummonerService, private createExcelService: CreateExcelService, private datePipe: DatePipe) { }
+
+  constructor(private summonerService: SummonerService, private matchDataHelper: MatchDataHelper, private createExcelService: CreateExcelService, private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.summonerDetailsSub = this.summonerService.summonerDetailsReady.subscribe((dataReady) => {
@@ -235,7 +142,8 @@ export class MatchDetailsComponent implements OnInit {
         var allMatchDetailData = this.summonerService.getMatchInfo();
 
         for (let i = 0; i < allMatchDetailData.length; i++) {
-          var newMatchDetails = this.createMatchDetails(allMatchDetailData[i]);
+          var newMatchDetails = this.matchDataHelper.createMatchDetails(this.summonerDetails, allMatchDetailData[i]) as MatchDetailsTeams;
+          newMatchDetails.teams = this.getTeamDetails(allMatchDetailData[i]);
           var championDetails = this.summonerService.getChampionDetails(newMatchDetails.championId);
 
           newMatchDetails.championName = championDetails.name;
@@ -264,5 +172,6 @@ export class MatchDetailsComponent implements OnInit {
 
   ngOnDestroy() {
     this.summonerDetailsSub.unsubscribe();
+    this.matchDetailsSub.unsubscribe();
   }
 }
